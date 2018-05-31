@@ -1,0 +1,65 @@
+# Docker Compose YAML file
+# Do not modify unless noted below
+version: '2'
+services:
+  db:
+    image: mysql:latest
+    volumes:
+     - socket:/var/run/mysqld
+     - ./data/mysql:/var/lib/mysql # The directory on the left: datadir volume of MySQL service
+    networks:
+     - moocdb_net
+  phpmyadmin:
+    depends_on:
+     - db
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+     - PMA_ARBITRARY=1
+    ports:
+     - 8080:80
+    networks:
+    - moocdb_net
+    restart: always
+  curated:
+    depends_on:
+     - db
+    build: ./MOOC-Learner-Curated/
+    volumes:
+     - socket:/var/run/mysqld
+     - ./config:/app/config
+     - ./data:/data # The directory on the left: raw data dir
+    networks:
+     - moocdb_net
+  quantified:
+    depends_on:
+     - db
+     - curated
+    build: ./MOOC-Learner-Quantified/
+    volumes:
+     - socket:/var/run/mysqld
+     - ./config:/app/config
+    networks:
+     - moocdb_net
+  visualized:
+    depends_on:
+     - db
+     - quantified
+     - redis
+    build: ./MOOC-Learner-Visualized/
+    ports:
+     - 8888:5000
+    volumes:
+     - socket:/var/run/mysqld
+     - ./config:/app/config
+    networks:
+     - moocdb_net
+  redis:
+    image: redis
+    networks:
+     - moocdb_net
+volumes:
+  socket:
+
+networks:
+  moocdb_net:
+    driver: bridge

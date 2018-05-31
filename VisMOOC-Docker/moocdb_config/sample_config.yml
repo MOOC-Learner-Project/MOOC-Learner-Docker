@@ -1,0 +1,51 @@
+# Database and workspace configuration
+MOOCdb:
+  database: moocdb # default database name
+  work_dir: /app/ # do not change this
+  MLC_folder: MOOC-Learner-Curated # do not change this
+  MLQ_folder: MOOC-Learner-Quantified # do not change this
+  MLM_folder: MOOC-Learner-Modeled # do not change this
+  MLV_folder: MOOC-Learner-Visualized # do not change this
+
+# MySQL server configuration, do not change this 
+mysql:
+  host: localhost # do not change this
+  port: 3306 # do not change this
+  user: root # do not change this
+  password: BAD_IDEA # do not change this
+
+# Pipeline configuration
+# For each pipe, "yes"/"no" means that run/ignore this step
+# config the full pipeline
+full_pipeline:
+  MLC: yes
+
+# config the MOOC-Learer-Curated pipeline
+MLC_pipeline:
+  folder_setup: no
+  apipe: no
+  qpipe:
+    qpipe_process_events: no
+    qpipe_create_db: no
+    qpipe_populate_db: no
+  curation: no
+  vismooc_extensions:
+    vismooc_process:  yes
+    vismooc_populate: yes
+
+# Raw data file tree configuration
+data_file:
+  data_dir: /data # do not change this, this is the path inside the containers
+  # change the following suffixes to recognize the course raw data files automatically
+  log_file: log_data.json
+  course_structure_file: course_structure-prod-analytics.json
+  course_certificates_file: certificates_generatedcertificate-prod-analytics.sql
+  course_enrollment_file: student_courseenrollment-prod-analytics.sql
+  course_user_file: auth_user-prod-analytics.sql
+  course_profile_file: auth_userprofile-prod-analytics.sql
+  course_forum_file: prod.mongo
+
+# Specification of the Open edX logs
+open_edx_spec:
+  # HKUSTx/MITx
+  video_id_spec: HKUSTx

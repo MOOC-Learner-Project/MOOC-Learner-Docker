@@ -1,0 +1,26 @@
+{
+    "mongo": {
+        "host": "db",
+        "name": "testVismoocElearning",
+        "port": 27017
+    },
+    "sql": {
+        "db": "moocdb",
+        "user": "root",
+        "password": "ALFA",
+		"unix_socket": "/dist/mysqld/mysqld.sock"
+    },
+    "data_server": {
+        "third_party_keys": {
+            "Youtube_key": "AIzaSyBvOV3z5LB78NB-yv1osqQQ4A9eY7Xg5r0"
+        }
+    },
+    "webserver": {
+        "port": "9999",
+        "subPath":"mit_test",
+        "redis": {
+            "port": 6379,
+            "host": "redis"
+        }
+    }
+}

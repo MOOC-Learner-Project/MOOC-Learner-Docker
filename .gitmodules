@@ -1,0 +1,13 @@
+[submodule "MOOC-Learner-Curated"]
+	path = MOOC-Learner-Curated
+	url = git@github.com:MOOC-Learner-Project/MOOC-Learner-Curated.git
+[submodule "MOOC-Learner-Quantified"]
+	path = MOOC-Learner-Quantified
+	url = git@github.com:MOOC-Learner-Project/MOOC-Learner-Quantified.git
+[submodule "MOOC-Learner-Visualized"]
+	path = MOOC-Learner-Visualized
+	url = git@github.com:MOOC-Learner-Project/MOOC-Learner-Visualized.git
+[submodule "MOOC-Learner-Modeled"]
+	path = MOOC-Learner-Modeled
+	url = git@github.com:MOOC-Learner-Project/MOOC-Learner-Modeled.git
+

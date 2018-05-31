@@ -1,0 +1,101 @@
+# Docker Compose YAML file
+# Do not modify unless noted below
+version: '2.1'
+services:
+  moocdb:
+    image: mysql:latest
+    environment:
+     - MYSQL_ROOT_PASSWORD=BAD_IDEA
+    volumes:
+     - socket:/var/run/mysqld
+     - /data/mysql:/var/lib/mysql # The directory on the left: datadir volume of MySQL service
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+    networks:
+     - vismooc_net
+  phpmyadmin:
+    depends_on:
+     - moocdb
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+     - MYSQL_ROOT_PASSWORD=BAD_IDEA
+     - PMA_ARBITRARY=1
+    ports:
+     - 0.0.0.0:8090:80
+    networks:
+    - vismooc_net
+    restart: always
+  curated:
+    depends_on:
+     - moocdb
+    build: ../MOOC-Learner-Curated/
+    command: ["./wait_for_it.sh", "moocdb", "python", "-u", "autorun.py", "-c", "../config/config.yml"]
+    volumes:
+     - socket:/var/run/mysqld
+     - ./moocdb_config:/app/config
+     - /data:/data # The directory on the left: raw data dir
+    networks:
+     - vismooc_net
+  web:
+    image: hkustvislab/vismooc-web-server:elearning-master
+    ports:
+     - 0.0.0.0:9999:9999
+    volumes:
+     - ./config:/config
+    depends_on:
+     - db
+     - redis
+    logging:
+      driver: json-file
+      options:
+        max-size: "1g"
+        max-file: "10"
+    networks:
+     - vismooc_net
+  data:
+    image: hkustvislab/vismooc-data-server:elearning-master
+    volumes:
+     - /data/vismooc-raw-data:/dist/vismooc-raw-data
+     - ./config:/config
+     - socket:/dist/mysqld
+    depends_on:
+      db:
+        condition: service_started
+      moocdb:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "1g"
+        max-file: "10"
+    networks:
+     - vismooc_net
+  redis:
+    image: redis
+    networks:
+     - vismooc_net
+  db:
+    image: mongo:3.4
+    volumes:
+     - /data/mongodb:/data
+    networks:
+     - vismooc_net
+  mongo-express:
+    image: mongo-express
+    depends_on:
+     - db
+    links:
+     - db:mongo
+    ports:
+     - 0.0.0.0:8091:8081
+    networks:
+     - vismooc_net
+
+volumes:
+  socket:
+
+networks:
+  vismooc_net:
+    driver: bridge
