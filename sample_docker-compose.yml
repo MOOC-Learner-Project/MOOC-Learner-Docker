@@ -4,6 +4,8 @@ version: '2'
 services:
   db:
     image: mysql:latest
+    environment:
+     - MYSQL_ROOT_PASSWORD=ALFA
     volumes:
      - socket:/var/run/mysqld
      - ./data/mysql:/var/lib/mysql # The directory on the left: datadir volume of MySQL service
@@ -14,6 +16,7 @@ services:
      - db
     image: phpmyadmin/phpmyadmin:latest
     environment:
+     - MYSQL_ROOT_PASSWORD=ALFA
      - PMA_ARBITRARY=1
     ports:
      - 8080:80

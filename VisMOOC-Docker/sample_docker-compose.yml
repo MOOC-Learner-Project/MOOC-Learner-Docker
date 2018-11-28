@@ -5,7 +5,7 @@ services:
   moocdb:
     image: mysql:latest
     environment:
-     - MYSQL_ROOT_PASSWORD=BAD_IDEA
+     - MYSQL_ROOT_PASSWORD=ALFA
     volumes:
      - socket:/var/run/mysqld
      - /data/mysql:/var/lib/mysql # The directory on the left: datadir volume of MySQL service
@@ -20,7 +20,7 @@ services:
      - moocdb
     image: phpmyadmin/phpmyadmin:latest
     environment:
-     - MYSQL_ROOT_PASSWORD=BAD_IDEA
+     - MYSQL_ROOT_PASSWORD=ALFA
      - PMA_ARBITRARY=1
     ports:
      - 0.0.0.0:8090:80
