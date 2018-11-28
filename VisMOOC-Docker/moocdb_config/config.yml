@@ -12,7 +12,7 @@ mysql:
   host: localhost # do not change this
   port: 3306 # do not change this
   user: root # do not change this
-  password: BAD_IDEA # do not change this
+  password: ALFA # do not change this
 
 # Pipeline configuration
 # For each pipe, "yes"/"no" means that run/ignore this step

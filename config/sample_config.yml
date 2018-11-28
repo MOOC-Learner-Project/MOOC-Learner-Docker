@@ -12,6 +12,7 @@ mysql:
   host: localhost # do not change this
   port: 3306 # do not change this
   user: root # do not change this
+  password: ALFA
 
 # Redis server configuration, do not change this
 redis:
