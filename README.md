@@ -1,39 +1,28 @@
 # MOOC-Learner-Docker
------------------------
+
 ## Table of Contents:
  - [Requirements](#requirements)
  - [Installation](#installation)
  - [Configuration](#configuration)
- - [Running Method](#running-method)
- - [Other Services](#other-services)
- - [Testing on Synthetic Data](#testing-on-synthetic-data)
+ - [Tutorial](#tutorial)
+ - [Test on Synthetic Data](#test-on-synthetic-data)
+ - [Other Services](#other-modules)
+ 
+The MOOC-Learner-Pipeline is embedded into docker containers with unified configuration. MOOC-Learner-Docker 
+contains 4 repositories as sub-modules. See [Design](docs/README.md) for a more in-depth description.
 
 ## Requirements:
-#### Softwares (with links to their docs)
- - [Docker](https://docs.docker.com/)
- - [Docker Compose](https://docs.docker.com/compose/)
-
-#### Software Instaldetach from tmuxlation:
- - [Docker](https://docs.docker.com/engine/installation/)
- - [Docker Compose](https://docs.docker.com/compose/install/)
+<a href="https://www.docker.com/" ><img src="https://img.shields.io/badge/Docker-blue.svg"></a> <a href="https://www.docker.com/compose" ><img src="https://img.shields.io/badge/Docker_Compose-blue.svg"></a>
 
 ## Installation:
 #### Recursively clone the repo
 ```
-git clone --recursive git@github.mit.edu:ALFA-MOOCdb/MOOC-Learner-Docker.git
+git clone --recursive git@github.com:MOOC-Learner-Project/MOOC-Learner-Docker.git
 ```
 #### Build base images
-For the convenience of testing and debugging, there is no complete image of each module. We rebuild each module on every execution of `docker-compose up`. So before building the images of modules and running the containers, you should build each base image. You can use
-```
-bash buildDockerImages.sh
-```
-
-And to remove with
-```
-bash cleanDockerImages.sh
-```
-
-Separately you can build with:
+Temporarily for the convenience of testing and debugging, there is no complete image of each module. We rebuild each 
+module on every execution of `docker-compose up`. So before building the images of modules and running the containers, 
+you should build each base image.
 
 Enter directory `./curated_base_img` and run command:
 ```
@@ -59,10 +48,12 @@ In the `MOOCdb` section, change the default database name if you want.
 #### Full Pipeline config
 In the `full_pipeline` section, indicate that whether you want to run `MLC`, `MLQ`, `MLM` and `MLV`.
 
-Note that you mush at least run MLC when executing the pipeline for the first time. But after that you may not need to run MLC again when the raw data is not updated.
+Note that you mush at least run MLC when executing the pipeline for the first time. But after that you may not need to 
+run MLC again when the raw data is not updated.
 #### Data file config
 ##### 1. To run MLC, first change the data dir in `docker-compose.yml`:
-In section `services:curated:volumes` (at the second in-line comment), change the directory on the left to your local data dir
+In section `services:curated:volumes` (at the second in-line comment), change the directory on the left to your local 
+data dir
 ```
 - [local data dir]:/data
 ```
@@ -72,13 +63,16 @@ In section `services:curated:volumes` (at the second in-line comment), change th
 ```
 (no need to change for HKUSTx courses)
 ##### 3. (Optional) You can also change the directory where MySQL data mounts:
-Since MySQL data are huge, you can mount them in another drive which has more spare space: In `docker-compose.yml`, section `services:db:volumes` (at the first in-line comment), change the on the left to your demanded directory
+Since MySQL data are huge, you can mount them in another drive which has more spare space: In `docker-compose.yml`, 
+section `services:db:volumes` (at the first in-line comment), change the on the left to your demanded directory
 ```
 - [local mysql data dir]:/var/lib/mysql
 ```
 Note you must create this folder in advance and have the read and write access to it.
+
 #### MySQL password config
-Using empty MySQL root password may be insecure. Note that phpMyAdmin is using the same set of username and password as MySQL server. Please secure your data by adding a root password.
+Using empty MySQL root password may be insecure. **Note** that `phpMyAdmin` is using the same set of username and 
+password as MySQL server. Please secure your data by adding a root password.
 
 ##### 1. Modify the `docker-compose.yml` file:
 In `docker-compose.yml` comment out line
@@ -101,7 +95,8 @@ Modify it correspondingly.
 #### Others
 For the other configurations, please follow the comments in `./config/config.yml`.
 
-## Running method:
+## Tutorial:
+
 #### Build and run full pipeline for the first time (or after killing all containers)
 In the project's root directory, run command
 ```
@@ -137,7 +132,8 @@ By running command
 docker stats
 ```
 #### Stop a specific service
-Sometimes, you want to stop a specific service which exposes too much information to the outside but you are not going to use it, (e.g. `MLV`).
+Sometimes, you want to stop a specific service which exposes too much information to the outside but you are not going 
+to use it, (e.g. `MLV`).
 
 You can stop it by running command:
 ```
@@ -178,27 +174,69 @@ By simply typing `exit`
 #### Inspect the `MOOCdb` database with `phpMyAdmin`
 There is also a `phpMyAdmin` service running concurrently. To log in, visit `phpMyAdmin` on `http://[your server's ip]:8080`
 
-Please leave the `Server` field empty and enter `root` in the `Username` filed and your password in the `Password` field. Note that `phpMyAdmin` is using the same set of login as the `MySQL` server. Press `Go` to browse the `MySQL` `MOOCdb` database.
+Please leave the `Server` field empty and enter `root` in the `Username` filed and your password in the `Password` field.
+ Note that `phpMyAdmin` is using the same set of login as the `MySQL` server. Press `Go` to browse the `MySQL` `MOOCdb` 
+ database.
 
 `phpMyAdmin` is more user-friendly and easy-to-use. It also makes debugging with the `MOOCdb` database easier.
 
-## Other Services
+## Test on Synthetic Data
+To test `MOOC-Learner-Docker` without sensitive data. You can use the synthetic data generators in MLC. And run 
+`MOOC-Learner-Docker` on it.
+
+#### Simple Synthetic Data Generator
+Now, only the simple synthetic data generator is available. To run it, please do not move its location, but you can 
+execute the bash command at any location since it recognize relative paths.
+
+Although there are much more input arguments of this generator, at the root directory of `MOOC-Learner-Docker`, you can 
+simply execute
+```
+python2 MOOC-Learner-Curated/synthetic_generators/simple_synthetic_generator.py
+```
+Then it will create a temporary data folder at `./data` with default course name `synthetic`.
+
+#### Run `MOOC-Learner-Docker` on synthetic data
+The default config files `config/config.yml` and `docker-compose.yml` are set up to run on synthetic data at default 
+location directly.
+
+So if you did not change them before, you can directly run the services by
+```
+docker-compose up -d --build
+```
+
+MLC is queued in the default pipeline config so after some time you can find a populated `moocdb` database in the `MySQL`
+ container.
+
+## Other Modules
 #### Running `VisMOOC-Docker`
-Go into the folder `VisMOOC-Docker` and run command `docker-compose up -d` as usual. The services include `MLC`, `MOOCdb` and the complete set of services of `VisMOOC`. So you can also config `MLC` at `./moocdb_config/config.yaml`.
+Go into the folder `VisMOOC-Docker` and run command `docker-compose up -d` as usual. The services include `MLC`, `MOOCdb`
+ and the complete set of services of `VisMOOC`. So you can also config `MLC` at `./moocdb_config/config.yaml`.
 
-By starting all the services, you will have `VisMOOC` web server running on `http://[your server's ip]:9999`. As auxiliary tools for debugging, you will also have `phpMyAdmin` on port `8090` and `Mongo-Express` on `8091`.
+By starting all the services, you will have `VisMOOC` web server running on `http://[your server's ip]:9999`. As 
+auxiliary tools for debugging, you will also have `phpMyAdmin` on port `8090` and `Mongo-Express` on `8091`.
+
 #### Running another Parallel `MOOC-Learner-Docker`
-You may want to run two `MOOC-Learner-Docker` pipelines at the same time, which can be done by running `docker-compose` under the folder `Second-Docker`. Or, if you have recursively cloned the MOOC-Learner-Docker repo to another machine, you'll notice that you now have `sample-docker-compose.yml` and `config/sample-config.yml` files, from which you can copy/modify to create an independent `docker-compose.yml` file and `config.yml` file.
+You may want to run two `MOOC-Learner-Docker` pipelines at the same time, which can be done by running `docker-compose` 
+under the folder `Second-Docker`. Or, if you have recursively cloned the MOOC-Learner-Docker repo to another machine, 
+you'll notice that you now have `sample-docker-compose.yml` and `config/sample-config.yml` files, from which you can 
+copy/modify to create an independent `docker-compose.yml` file and `config.yml` file.
 
-Since there might be other docker containers running MOOC-Learner-Docker, you should change the `container_name`'s filed in `docker-compose.yml` to avoid naming conflict and also change the binding ports in `ports` fields if they are already currently being used. To check what docker containers are running, along with the container names and ports they are using, run:
+Since there might be other docker containers running MOOC-Learner-Docker, you should change the `container_name`'s filed
+in `docker-compose.yml` to avoid naming conflict and also change the binding ports in `ports` fields if they are already
+currently being used. To check what docker containers are running, along with the container names and ports they are
+using, run:
 
 ```
 docker ps
 ```
 
-To change the `container_name`'s in `docker-compose.yml` you are essentially making the following name changes: `db` to `[some_prefix]_db`, `phpmyadmin` to `[some_prefix]_phpmyadmin`, `curated` to `[some_prefix]_curated` and so on... as well as specifying these new container names under each container's `depends_on` fields.
+To change the `container_name`'s in `docker-compose.yml` you are essentially making the following name changes: `db` 
+to `[some_prefix]_db`, `phpmyadmin` to `[some_prefix]_phpmyadmin`, `curated` to `[some_prefix]_curated` and so on.... 
+as well as specifying these new container names under each container's `depends_on` fields.
 
-One final important note about changing the `db` container name: In order for the curated data to connect properly to the database, we must specify our new name for the `db` container in the `MOOC-Learner-Curated/Docker` file. Specifically, you need to change the hard-coded `db` value in the last line from:
+One final important note about changing the `db` container name: In order for the curated data to connect properly to 
+the database, we must specify our new name for the `db` container in the `MOOC-Learner-Curated/Docker` file. 
+Specifically, you need to change the hard-coded `db` value in the last line from:
 
 ```
 CMD ["./wait_for_it.sh", "db", ...
@@ -207,31 +245,8 @@ CMD ["./wait_for_it.sh", "db", ...
 to
 
 ```
-CMD ["./wait_for_it.sh", "[some_prefix]_db", ...
+CMD ["./wait_for_it.sh", "[your_prefix]_db", ...
 ```
 
 Following this logic, you can run as many pipelines as you want simultaneously.
-
-## Testing on Synthetic Data
-To test `MOOC-Learner-Docker` without sensitive data. You can use the synthetic data generators in MLC. And run `MOOC-Learner-Docker` on it.
-
-#### Simple Synthetic Data Generator
-To run a simple synthetic data generator you can execute the bash command at any location since it recognize relative paths. At the root directory of `MOOC-Learner-Docker`, you can simply run
-```
-python MOOC-Learner-Curated/synthetic_generators/simple_synthetic_generator.py -o data
-```
-Then it will create a temporary data folder at `./data` with default course name `synthetic`.
-
-#### Run `MOOC-Learner-Docker` on synthetic data
-The default config files `config/config.yml` and `docker-compose.yml` are set up to run on synthetic data at default location directly.
-
-So if you did not change them before, you can directly run the services by
-```
-docker-compose up -d --build
-```
-
-MLC is queued in the default pipeline config so after some time you can find a populated `moocdb` database in the `MySQL` container.
-
-# Example of running on Synthetic Data
-
 
