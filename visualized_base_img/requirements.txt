@@ -6,7 +6,7 @@
 # full_pipe.py: 8
 # processing/process.py: 2
 # rendering/render.py: 2
-Flask == 0.12.2
+Flask >= 0.12.3
 
 # autorun.py: 8
 # fetching/connector.py: 1,2
