@@ -16,7 +16,7 @@ MySQL_python == 1.2.5
 
 # autorun.py: 7
 # config/config.py: 7
-PyYAML == 3.12
+PyYAML >= 4.2b1
 
 # miscellaneous.py: 7
 # stopout_model_learning.py: 21,24
