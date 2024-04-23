@@ -26,7 +26,7 @@ pandas == 0.20.2
 scikit_learn == 0.18.2
 
 # feature_populate/scripts/populate_feature_202_percentile_of_average_number_of_attempts.py: 8
-scipy == 0.17.0
+scipy == 1.11.1
 
 # util/util.py: 8
 sqlparse == 0.5.0
